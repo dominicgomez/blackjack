@@ -16,10 +16,10 @@ typedef struct {
     size_t pos;
 } deck;
 
-deck *newcard(size_t sets);
-void killcard(deck *d);
-void printcard(const deck *d);
-void deck_shuffle(deck *d, size_t n);
-deck *deck_draw(deck *d, size_t n);
+deck *newdeck();
+void killdeck(deck *d);
+void shuffle(deck *d);
+card *draw(deck *d);
+void printdeck(const deck *d);
 
 #endif

@@ -46,26 +46,23 @@ printcard(const card *c)
 }
 
 deck *
-newdeck(size_t sets)
+newdeck()
 {
     deck *d = malloc(sizeof(deck));
     if (!d) {
         fprintf(stderr, "%s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-    d->cards = malloc(sizeof(card *) * NUMCARDS * sets);
+    d->cards = malloc(sizeof(card *) * NUMCARDS);
     if (!d->cards) {
         fprintf(stderr, "%s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-    d->sets = sets;
     d->pos = 0;
-    for (size_t i = 0; i < sets; ++i) {
-        for (size_t j = 0; j < NUMRANKS; ++j) {
-            for (size_t k = 0; k < NUMSUITS; ++k) {
-                d->cards[d->pos] = newcard(RANKS[j], SUITS[k]);
-                ++d->pos;
-            }
+    for (size_t j = 0; j < NUMRANKS; ++j) {
+        for (size_t k = 0; k < NUMSUITS; ++k) {
+            d->cards[d->pos] = newcard(RANKS[j], SUITS[k]);
+            ++d->pos;
         }
     }
     return d;
@@ -74,6 +71,10 @@ newdeck(size_t sets)
 void
 killdeck(deck *d)
 {
+    // Avoid dereferencing a null pointer.
+    if (!d) {
+        return;
+    }
     for (size_t i = 0; i < NUMCARDS * d->sets; ++i) {
         killcard(d->cards[i]);
     }
@@ -83,14 +84,15 @@ killdeck(deck *d)
 }
 
 void
-shuffle(deck *d, size_t n)
+shuffle(deck *d)
 {
     d->pos = 0;
 }
 
-deck *
-draw(deck *d, size_t n)
+card *
+draw(deck *d)
 {
+    return NULL;
 }
 
 void
