@@ -17,7 +17,7 @@ const size_t NUMSUITS = sizeof(SUITS) / sizeof(SUITS[0]);
 const size_t NUMCARDS = NUMRANKS * NUMSUITS;
 
 static card *
-newcard(const char *rank, const char *suit)
+card_init(const char *rank, const char *suit)
 {
     card *c = malloc(sizeof(card));
     if (!c) {
@@ -38,7 +38,7 @@ newcard(const char *rank, const char *suit)
 }
 
 static void
-killcard(card *c)
+card_kill(card *c)
 {
     free(c->rank);
     free(c->suit);
@@ -46,21 +46,13 @@ killcard(card *c)
 }
 
 static void
-printcard(const card *c)
+card_print(const card *c)
 {
     printf("%s%s", c->rank, c->suit);
 }
 
-static void
-swapcards(const card *x, const card *y)
-{
-    const card *z = x;
-    x = y;
-    y = z;
-}
-
 deck *
-newdeck(size_t sets)
+deck_init(size_t sets)
 {
     deck *d = malloc(sizeof(deck));
     if (!d) {
@@ -76,26 +68,25 @@ newdeck(size_t sets)
     for (size_t i = 0; i < sets; ++i) {
         for (size_t j = 0; j < NUMRANKS; ++j) {
             for (size_t k = 0; k < NUMSUITS; ++k) {
-                d->cards[d->top] = newcard(RANKS[j], SUITS[k]);
+                d->cards[d->top] = card_init(RANKS[j], SUITS[k]);
                 ++d->top;
             }
         }
     }
     d->sets = sets;
     d->top = 0;
-    d->shuffled = false;
     return d;
 }
 
 void
-killdeck(deck *d)
+deck_kill(deck *d)
 {
     // Avoid dereferencing a null pointer.
     if (!d) {
         return;
     }
     for (size_t i = 0; i < d->sets * NUMCARDS; ++i) {
-        killcard(d->cards[i]);
+        card_kill(d->cards[i]);
     }
     // Free the pointer? Free the pointer to the pointer? I don't even know anymore.
     free(d->cards);
@@ -103,64 +94,72 @@ killdeck(deck *d)
 }
 
 bool
-deckisready(const deck *const d)
+deck_isready(const deck *const d)
 {
-    return deckisfull(d) && deckisshuffled(d);
+    return deck_isfull(d) && deck_isshuffled(d);
 }
 
 bool
-deckisfull(const deck *const d)
+deck_isfull(const deck *const d)
 {
     return d->top == 0;
 }
 
 bool
-deckisempty(const deck *const d)
+deck_isempty(const deck *const d)
 {
     return d->top == d->sets * NUMCARDS;
 }
 
 bool
-deckisshuffled(const deck *const d)
+deck_isordered(const deck *const d)
+{
+    return true;
+}
+
+bool
+deck_isshuffled(const deck *const d)
 {
     return d->shuffled;
 }
 
 void
-preparedeck(deck *d)
+deck_prepare(deck *d)
 {
     d->top = 0;
-    shuffledeck(d);
+    deck_shuffle(d);
 }
 
 void
-shuffledeck(deck *d)
+deck_shuffle(deck *d)
 {
     srand(time(NULL));
     for (size_t i = (d->sets * NUMCARDS) - 1; i > 0; --i) {
-        int j = rand() % i + 1;
-        swapcards(d->cards[j], d->cards[i]);
+        int j = rand() % (i + 1);
+        card *temp = d->cards[i];
+        d->cards[i] = d->cards[j];
+        d->cards[j] = temp;
     }
     d->shuffled = true;
 }
 
-const card *const
-drawfromdeck(deck *d)
+card *
+deck_draw(deck *d)
 {
-    if (!deckisempty(d)) {
+    if (!deck_isempty(d)) {
         --d->top;
     }
     return d->cards[d->top + 1];
 }
 
 void
-printdeck(const deck *d)
+deck_print(const deck *d)
 {
     printf("[");
     for (size_t i = d->top; i < (d->sets * NUMCARDS) - 1; ++i) {
-        printcard(d->cards[i]);
+        card_print(d->cards[i]);
         printf(", ");
     }
-    printcard(d->cards[(d->sets * NUMCARDS) - 1]);
+    card_print(d->cards[(d->sets * NUMCARDS) - 1]);
     printf("]\n");
 }

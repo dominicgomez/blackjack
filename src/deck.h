@@ -34,7 +34,6 @@ typedef struct {
     card **cards;   /**< An ordered (top to bottom) collection of the cards in the deck. */
     size_t sets;    /**< The number of sets in the deck. */
     size_t top;     /**< The index of the next card in the deck to be drawn. */
-    bool shuffled;  /**< Whether the deck is shuffled. */
 } deck;
 
 /**
@@ -45,69 +44,76 @@ typedef struct {
  * @see getready
  * @warning The deck is not ready to draw from.
  */
-deck *newdeck(size_t sets);
+deck *deck_init(size_t sets);
 
 /**
  * @brief Destroy a deck.
  *
  * @param d The deck to destroy.
  */
-void killdeck(deck *d);
+void deck_kill(deck *d);
 
 /**
  * @brief Determine whether a deck is ready to draw from.
  *
  * @param d The deck to check.
  */
-bool deckisready(const deck *const d);
+bool deck_isready(const deck *const d);
 
 /**
  * @brief Determine whether a deck has not been drawn from.
  *
  * @param d The deck to check.
  */
-bool deckisfull(const deck *const d);
+bool deck_isfull(const deck *const d);
 
 /**
  * @brief Determine whether all the cards in a deck have been drawn.
  *
  * @param d The deck to check.
  */
-bool deckisempty(const deck *const d);
+bool deck_isempty(const deck *const d);
 
 /**
- * @brief Determine whether a deck is shuffled.
+ * @brief Determine whether a deck is ordered.
  *
  * @param d The deck to check.
  */
-bool deckisshuffled(const deck *const d);
+bool deck_isordered(const deck *const d);
+
+/**
+ * @brief Determine whether a deck is shuffled.
+
+ * @param d The deck to check.
+ */
+bool deck_isshuffled(const deck *const d);
 
 /**
  * @brief Get a deck ready to draw from.
  *
  * @param d The deck to prepare.
  */
-void preparedeck(deck *d);
+void deck_prepare(deck *d);
 
 /**
  * @brief Shuffle a deck.
  *
  * @param d The deck to shuffle.
  */
-void shuffledeck(deck *d);
+void deck_shuffle(deck *d);
 
 /**
  * @brief Draw @p n cards from the top of the deck.
  *
  * @param d The deck to draw from.
  */
-const card *const drawfromdeck(deck *d);
+card *deck_draw(deck *d);
 
 /**
  * @brief Print the deck's cards from top to bottom to stdout.
  *
  * @param d The deck to print.
  */
-void printdeck(const deck *d);
+void deck_print(const deck *d);
 
 #endif
