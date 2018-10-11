@@ -5,6 +5,17 @@
 #include <time.h>
 #include "deck.h"
 
+/** The ranks in a standard deck. */
+const char *RANKS[] = {"A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"};
+/** The suits in a standard deck. */
+const char *SUITS[] = {"♠", "♥", "♦", "♣"};
+/** The number of ranks in a standard deck (13). */
+const size_t NUMRANKS = sizeof(RANKS) / sizeof(RANKS[0]);
+/** The number of suits in a standard deck (4). */
+const size_t NUMSUITS = sizeof(SUITS) / sizeof(SUITS[0]);
+/** The number of cards in a standard deck (52). */
+const size_t NUMCARDS = NUMRANKS * NUMSUITS;
+
 static card *
 newcard(const char *rank, const char *suit)
 {
@@ -70,7 +81,8 @@ newdeck(size_t sets)
             }
         }
     }
-    d->n = NUMCARDS * sets;
+    d->sets = sets;
+    d->top = 0;
     d->shuffled = false;
     return d;
 }
@@ -82,7 +94,7 @@ killdeck(deck *d)
     if (!d) {
         return;
     }
-    for (size_t i = 0; i < d->n; ++i) {
+    for (size_t i = 0; i < d->sets * NUMCARDS; ++i) {
         killcard(d->cards[i]);
     }
     // Free the pointer? Free the pointer to the pointer? I don't even know anymore.
@@ -93,7 +105,7 @@ killdeck(deck *d)
 bool
 deckisready(const deck *const d)
 {
-    return deckisfull(d) && d->shuffled;
+    return deckisfull(d) && deckisshuffled(d);
 }
 
 bool
@@ -105,7 +117,7 @@ deckisfull(const deck *const d)
 bool
 deckisempty(const deck *const d)
 {
-    return d->top == d->n;
+    return d->top == d->sets * NUMCARDS;
 }
 
 bool
@@ -125,7 +137,7 @@ void
 shuffledeck(deck *d)
 {
     srand(time(NULL));
-    for (size_t i = d->n - 1; i > 0; --i) {
+    for (size_t i = (d->sets * NUMCARDS) - 1; i > 0; --i) {
         int j = rand() % i + 1;
         swapcards(d->cards[j], d->cards[i]);
     }
@@ -145,6 +157,10 @@ void
 printdeck(const deck *d)
 {
     printf("[");
-
+    for (size_t i = d->top; i < (d->sets * NUMCARDS) - 1; ++i) {
+        printcard(d->cards[i]);
+        printf(", ");
+    }
+    printcard(d->cards[(d->sets * NUMCARDS) - 1]);
     printf("]\n");
 }

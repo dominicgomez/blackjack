@@ -19,22 +19,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-/** The ranks in a standard deck. */
-const char *RANKS[] = {"A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"};
-/** The suits in a standard deck. */
-const char *SUITS[] = {"♠", "♥", "♦", "♣"};
-/** The number of ranks in a standard deck (13). */
-const size_t NUMRANKS = sizeof(RANKS) / sizeof(RANKS[0]);
-/** The number of suits in a standard deck (4). */
-const size_t NUMSUITS = sizeof(SUITS) / sizeof(SUITS[0]);
-/** The number of cards in a standard deck (52). */
-const size_t NUMCARDS = NUMRANKS * NUMSUITS;
-
 /**
  * @brief A playing card.
  */
 typedef struct {
-    char *rank; /**< The card's rank (letter, number). */
+    char *rank; /**< The card's rank (A, K, Q, ..., 3, 2). */
     char *suit; /**< The card's suit icon (spades, hearts, diamonds, clubs). */
 } card;
 
@@ -43,7 +32,7 @@ typedef struct {
  */
 typedef struct {
     card **cards;   /**< An ordered (top to bottom) collection of the cards in the deck. */
-    size_t n;       /**< The number of cards in the deck. */
+    size_t sets;    /**< The number of sets in the deck. */
     size_t top;     /**< The index of the next card in the deck to be drawn. */
     bool shuffled;  /**< Whether the deck is shuffled. */
 } deck;
