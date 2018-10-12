@@ -24,7 +24,9 @@ static void
 card_kill(card *c)
 {
     free(c->rank);
+    c->rank = NULL;
     free(c->suit);
+    c->suit = NULL;
 }
 
 static void
@@ -79,7 +81,9 @@ deck_kill(deck *d)
         card_kill(&d->cards[i]);
     }
     free(d->cards);
+    d->cards = NULL;
     free(d);
+    d = NULL;
 }
 
 bool

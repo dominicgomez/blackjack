@@ -8,30 +8,30 @@ int main()
     printf("Creating empty deck...");
     deck *d = deck_init(1);
     assert(d);
-    printf("SUCCESSFUL\n");
+    printf("DONE\n");
 
     printf("Verifying appropriate top position in deck...");
     assert(d->top == 0);
-    printf("VERIFIED\n");
+    printf("DONE\n");
     printf("Verifying appropriate number of sets in deck...");
     assert(d->stddecks == 1);
-    printf("VERIFIED\n");
+    printf("DONE\n");
     printf("Verifying deck not shuffled...");
     assert(!d->shuffled);
-    printf("VERIFIED\n");
+    printf("DONE\n");
 
     printf("Verifying deck not ready for use in play in a new game...");
     assert(!deck_good(d));
-    printf("VERIFIED\n");
+    printf("DONE\n");
     printf("Verifying deck full...");
     assert(deck_full(d));
-    printf("VERIFIED\n");
+    printf("DONE\n");
     printf("Verifying deck not empty...");
     assert(!deck_empty(d));
-    printf("VERIFIED\n");
+    printf("DONE\n");
     printf("Verifying deck not shuffled...");
     assert(!deck_shuffled(d));
-    printf("VERIFIED\n");
+    printf("DONE\n");
 
     printf("Unshuffled deck: ");
     deck_print(d);
@@ -95,16 +95,19 @@ int main()
 
     printf("Verifying deck not ready for use in play in a new game...");
     assert(!deck_good(d));
-    printf("VERIFIED\n");
+    printf("DONE\n");
     printf("Verifying deck not full...");
     assert(!deck_full(d));
-    printf("VERIFIED\n");
+    printf("DONE\n");
     printf("Verifying deck empty...");
     assert(deck_empty(d));
-    printf("VERIFIED\n");
+    printf("DONE\n");
 
-    // kill deck
+    printf("Killing deck...");
     deck_kill(d);
+    printf("DONE\n");
+    // TODO: Why is this still a valid memory address if I set it to null in the destructor?
+    /* printf("%p\n", (void *)d); */
 
     return EXIT_SUCCESS;
 }
