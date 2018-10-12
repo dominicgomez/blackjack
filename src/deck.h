@@ -8,7 +8,7 @@
  * cards. The playing cards have standard ranks and suits, but the decks are not necessarily standard in that they
  * may be composed of more than one standard deck because casino games (for which these utilities were intended)
  * often use more than one set of standard playing cards in each deck.
- * @see http://www.github.com/dominicgomez
+ * @see http://www.github.com/dominicgomez/blackjack
  */
 
 #ifndef deck_h
