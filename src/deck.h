@@ -17,22 +17,43 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+/** The ranks in a standard deck (A, K, Q, J, 10, 9, 8, 7, 6, 5, 4, 3, 2). */
+extern const char *STD_RANKS[];
+/** The suits in a standard deck (spades, hearts, diamonds, clubs). */
+extern const char *STD_SUITS[];
+/** The number of ranks in a standard deck (13). */
+extern const size_t NUM_STD_RANKS;
+/** The number of suits in a standard deck (4). */
+extern const size_t NUM_STD_SUITS;
+/** The number of cards in a standard deck (52). */
+extern const size_t NUM_STD_CARDS;
+
 /**
  * @brief A playing card.
  *
  * @note Users should not instantiate @c card types. They are returned by some @c deck functions.
  */
 typedef struct {
-    char *rank; /**< The card's rank (A, K, Q, ..., 3, 2). */
+    char *rank; /**< The card's rank (A, K, Q, J, 10, 9, 8, 7, 6, 5, 4, 3, 2). */
     char *suit; /**< The card's suit (spades, hearts, diamonds, clubs) as an icon. */
 } card;
 
-/** * The deck may be composed of one or more standard decks.
+/**
+ * @brief Print a playing card's rank and suit.
+ *
+ * @param c The card to print.
+ */
+void
+card_println(const card *const c);
+
+/**
+ * @brief A deck of standard playing cards.
  */
 typedef struct {
     card *cards;        /**< A collection of the cards in the deck from top to bottom. */
     size_t top;         /**< The index of the next card in the deck to be drawn. */
     size_t stddecks;    /**< The number of standard playing card sets in the deck. */
+    bool shuffled;      /**< Whether the deck has been shuffled. */
 } deck;
 
 /**
@@ -42,7 +63,7 @@ typedef struct {
  * @return A newly created deck with @p n standard decks.
  * @see deck_prep
  * @see deck_kill
- * @warning The deck is not yet ready for use in play.
+ * @warning The deck is not yet ready for use in play in a new game.
  */
 deck *
 deck_init(size_t n);
@@ -57,11 +78,11 @@ void
 deck_kill(deck *d);
 
 /**
- * @brief Determine whether a deck is ready for use in play.
+ * @brief Determine whether a deck is ready for use in play in a new game.
  *
- * A deck is ready for use in play if it is full and shuffled.
+ * A deck is ready for use in play in a new game if it is full and shuffled.
  * @param d The deck to check.
- * @return Whether a deck is ready for use in play.
+ * @return Whether a deck is ready for use in play in a new game.
  * @see deck_full
  * @see deck_shuffled
  */
@@ -101,9 +122,31 @@ bool
 deck_shuffled(const deck *const d);
 
 /**
- * @brief Prepare a deck for use in play.
+ * @brief Determine the number of cards initially in the deck.
  *
- * A deck is ready for use in play if it is full and shuffled.
+ * @param d The deck to count.
+ * @return The number of cards initially in the deck.
+ * @see deck_full
+ * @see deck_empty
+ */
+size_t
+deck_count(const deck *const d);
+
+/**
+ * @brief Determine the number of cards remaining in the deck.
+ *
+ * @param d The deck to count.
+ * @return The number of cards remaining in the deck.
+ * @see deck_full
+ * @see deck_empty
+ */
+size_t
+deck_remaining(const deck *const d);
+
+/**
+ * @brief Prepare a deck for use in play in a new game.
+ *
+ * A deck is ready for use in play in a new game if it is full and shuffled.
  * @param d The deck to prepare.
  * @see deck_full
  * @see deck_shuffled
@@ -125,7 +168,7 @@ deck_shuffle(deck *d);
  * @param d The deck to draw from.
  * @return A pointer to the drawn card.
  */
-card *
+card
 deck_draw(deck *d);
 
 /**
