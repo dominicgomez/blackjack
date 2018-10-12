@@ -39,7 +39,7 @@ typedef struct {
 } card;
 
 /**
- * @brief Print a playing card's rank and suit.
+ * @brief Print a playing card's rank and suit followed by a newline.
  *
  * @param c The card to print.
  */
@@ -71,7 +71,7 @@ deck_init(size_t n);
 /**
  * @brief Destroy a deck.
  *
- * Free the resources used by the deck (i.e. the heap space used to store card objects).
+ * Free the resources used by the deck.
  * @param d The deck to destroy.
  */
 void
