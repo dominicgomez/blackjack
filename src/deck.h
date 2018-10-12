@@ -39,6 +39,14 @@ typedef struct {
 } card;
 
 /**
+ * @brief Determine the card's value.
+ *
+ * @param c The card to evaluate.
+ */
+static size_t
+card_value(const card *const c);
+
+/**
  * @brief Print a playing card's rank and suit followed by a newline.
  *
  * @param c The card to print.

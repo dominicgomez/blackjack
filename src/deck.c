@@ -29,6 +29,19 @@ card_kill(card *c)
     c->suit = NULL;
 }
 
+static size_t
+card_value(const card *const c)
+{
+    if (strncmp(c->rank, "A", 1) == 0) {
+        return 0;
+    } else if (strncmp(c->rank, "K", 1) == 0 || strncmp(c->rank, "Q", 1) == 0 || strncmp(c->rank, "J", 1) == 0) {
+        return 10;
+    } else {
+        return atoi(c->rank);
+    }
+}
+
+
 static void
 card_print(const card *const c)
 {
