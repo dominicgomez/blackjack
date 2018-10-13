@@ -1,14 +1,11 @@
-/**
- * @file deck.h
- * @author Dominic Gomez
- * @date 11 Oct 2018
- * @brief File containing the interface for a deck of standard playing cards.
+/*!
+ * \file deck.h
+ * \author Dominic Gomez
+ * \date 13 Oct 2018
+ * \brief Facilities for creating and manipulating a deck of playing cards.
  *
- * Constants, data structures, and functions to create, observe, manipulate, and destroy decks of standard playing
- * cards. The playing cards have standard ranks and suits, but the decks are not necessarily standard in that they
- * may be composed of more than one standard deck because casino games (for which these utilities were intended)
- * often use more than one set of standard playing cards in each deck.
- * @see http://www.github.com/dominicgomez/blackjack
+ * A deck may be initialized with 1 or more standard 52-card decks. If the deck is initialized with 2 standard
+ * 52-card decks, for example, it would have 2 aces of spades, 2 aces of hearts, etc.
  */
 
 #ifndef deck_h
@@ -17,173 +14,142 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-/** The ranks in a standard deck (A, K, Q, J, 10, 9, 8, 7, 6, 5, 4, 3, 2). */
-extern const char *STD_RANKS[];
-/** The suits in a standard deck (spades, hearts, diamonds, clubs). */
-extern const char *STD_SUITS[];
-/** The number of ranks in a standard deck (13). */
-extern const size_t NUM_STD_RANKS;
-/** The number of suits in a standard deck (4). */
-extern const size_t NUM_STD_SUITS;
-/** The number of cards in a standard deck (52). */
-extern const size_t NUM_STD_CARDS;
+/*! The ranks in a standard deck (A, K, Q, J, 10, 9, 8, 7, 6, 5, 4, 3, 2). */
+extern const char *STDDECK_RANKS[];
+/*! The suits in a standard deck (♠, ♥, ♦, ♣). */
+extern const char *STDDECK_SUITS[];
+/*! The number of ranks in a standard deck (13). */
+extern const size_t N_STDDECK_RANKS;
+/*! The number of suits in a standard deck (4). */
+extern const size_t N_STDDECK_SUITS;
+/*! The number of cards in a standard deck (52). */
+extern const size_t N_STDDECK_CARDS;
 
-/**
- * @brief A playing card.
+/*!
+ * \brief A playing card.
  *
- * @note Users should not instantiate @c card types. They are returned by some @c deck functions.
+ * \note Users shouldn't ever need to instantiate a \c card. They are all instantiated internally, and references
+ * to them are returned when necessary. The signature of its constructor function is purposefully omitted.
  */
 typedef struct {
-    char *rank; /**< The card's rank (A, K, Q, J, 10, 9, 8, 7, 6, 5, 4, 3, 2). */
-    char *suit; /**< The card's suit (spades, hearts, diamonds, clubs) as an icon. */
+    char *rank; //! The card's rank.
+    char *suit; //! The card's suit.
 } card;
 
-/**
- * @brief Determine the card's value.
+/*!
+ * \brief Determine if the card is an ace.
  *
- * @param c The card to evaluate.
+ * \note Outside the context of a card game, an ace has no value, so it doesn't make sense to assign one.
  */
-static size_t
-card_value(const card *const c);
+bool
+isace(const card *const c);
 
-/**
- * @brief Print a playing card's rank and suit followed by a newline.
+/*!
+ * \brief Determine if the card is a face card.
  *
- * @param c The card to print.
+ * \note Outside the context of a card game, a face card has no value, so it doesn't make sense to assign one.
+ */
+bool
+isface(const card *const c);
+
+/*!
+ * \brief Print a playing card to stdout (without a trailing newline).
+ *
+ * \param c The card to print.
  */
 void
-card_println(const card *const c);
+printcard(const card *const c);
 
-/**
- * @brief A deck of standard playing cards.
- */
+//! A deck of playing cards.
 typedef struct {
-    card *cards;        /**< A collection of the cards in the deck from top to bottom. */
-    size_t top;         /**< The index of the next card in the deck to be drawn. */
-    size_t stddecks;    /**< The number of standard playing card sets in the deck. */
-    bool shuffled;      /**< Whether the deck has been shuffled. */
+    card *cards;    /*!< An ordered collection of every card in the deck, even if it's already been drawn. */
+    size_t n_cards; /*!< The number of cards in the deck. */
+    size_t top;     /*!< The index of the next card to draw--the "top" of the deck. */
 } deck;
 
-/**
- * @brief Create a deck composed of @p n standard decks.
+/*!
+ * \brief Create a deck composed of \p n standard decks.
  *
- * @param n The number of standard decks to include.
- * @return A newly created deck with @p n standard decks.
- * @see deck_prep
- * @see deck_kill
- * @warning The deck is not yet ready for use in play in a new game.
+ * \param n The number of standard decks to include.
+ * \return A newly created deck made up of \p n standard 52-card decks.
+ * \see prep
+ * \see killdeck
+ * \warning The deck is not yet ready for use in play in a new game.
  */
-deck *
-deck_init(size_t n);
+deck
+initdeck(size_t n);
 
-/**
- * @brief Destroy a deck.
+/*!
+ * \brief Destroy a deck.
  *
  * Free the resources used by the deck.
- * @param d The deck to destroy.
+ * \param d The deck to destroy.
  */
 void
-deck_kill(deck *d);
+killdeck(deck *d);
 
 /**
- * @brief Determine whether a deck is ready for use in play in a new game.
- *
- * A deck is ready for use in play in a new game if it is full and shuffled.
- * @param d The deck to check.
- * @return Whether a deck is ready for use in play in a new game.
- * @see deck_full
- * @see deck_shuffled
- */
-bool
-deck_good(const deck *const d);
-
-/**
- * @brief Determine whether a deck is full.
+ * \brief Determine whether a deck is full.
  *
  * A deck is full if no cards have been drawn from it.
- * @param d The deck to check.
- * @return Whether the deck is full.
- * @see deck_empty
+ * \param d The deck to check.
+ * \return Whether the deck is full.
+ * \see isempty
  */
 bool
-deck_full(const deck *const d);
+isfull(const deck *const d);
 
 /**
- * @brief Determine whether a deck is empty.
+ * \brief Determine whether a deck is empty.
  *
  * A deck is empty if all cards have been drawn from it.
- * @param d The deck to check.
- * @return Whether the deck is empty.
- * @see deck_full
+ * \param d The deck to check.
+ * \return Whether the deck is empty.
  */
 bool
-deck_empty(const deck *const d);
+isempty(const deck *const d);
 
 /**
- * @brief Determine whether a deck is shuffled.
+ * \brief Determine whether a deck is shuffled.
  *
- * @param d The deck to check.
- * @return Whether the deck is shuffled.
- * @see deck_shuffle
+ * \param d The deck to check.
+ * \return Whether the deck is shuffled.
  */
 bool
-deck_shuffled(const deck *const d);
+isshuffled(const deck *const d);
 
 /**
- * @brief Determine the number of cards initially in the deck.
+ * \brief Determine the number of cards remaining in the deck.
  *
- * @param d The deck to count.
- * @return The number of cards initially in the deck.
- * @see deck_full
- * @see deck_empty
+ * \param d The deck to count.
+ * \return The number of cards remaining in the deck.
  */
 size_t
-deck_count(const deck *const d);
+len(const deck *const d);
 
 /**
- * @brief Determine the number of cards remaining in the deck.
+ * \brief Shuffle a deck.
  *
- * @param d The deck to count.
- * @return The number of cards remaining in the deck.
- * @see deck_full
- * @see deck_empty
- */
-size_t
-deck_remaining(const deck *const d);
-
-/**
- * @brief Prepare a deck for use in play in a new game.
- *
- * A deck is ready for use in play in a new game if it is full and shuffled.
- * @param d The deck to prepare.
- * @see deck_full
- * @see deck_shuffled
+ * \param d The deck to shuffle.
  */
 void
-deck_prep(deck *d);
+shuffle(deck *d);
 
 /**
- * @brief Shuffle a deck.
+ * \brief Draw a card from the top of the deck.
  *
- * @param d The deck to shuffle.
- */
-void
-deck_shuffle(deck *d);
-
-/**
- * @brief Draw a card from the top of the deck.
- *
- * @param d The deck to draw from.
- * @return A pointer to the drawn card.
+ * \param d The deck to draw from.
+ * \return A pointer to the drawn card.
  */
 card
-deck_draw(deck *d);
+draw(deck *d);
 
 /**
- * @brief Print the remaining cards in the deck in order.
+ * \brief Print the remaining cards in the deck in order.
  *
- * @param d The deck to print.
+ * \param d The deck to print.
  */
-void deck_print(const deck *d);
+void
+printdeck(const deck *d);
 
 #endif
